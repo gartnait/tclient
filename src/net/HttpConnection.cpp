@@ -22,7 +22,7 @@ std::string HttpConnection::Get(
         path += "?" + query;
     }
 
-    addrinfo hints;
+    addrinfo hints {};
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 

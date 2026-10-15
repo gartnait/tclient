@@ -22,9 +22,8 @@ UdpConnection::UdpConnection(
         );
     }
 
-    struct timeval tv;
+    struct timeval tv {};
     tv.tv_sec = kTimeout.count();
-    tv.tv_usec = 0;
 
     if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
         close(socket_fd);

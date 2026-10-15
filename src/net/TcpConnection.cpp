@@ -100,7 +100,7 @@ void TcpConnection::EstablishConnection() {
     setsockopt(socket_fd, SOL_SOCKET, SO_RCVBUF, &kBufferSize, sizeof(kBufferSize));
     setsockopt(socket_fd, SOL_SOCKET, SO_SNDBUF, &kBufferSize, sizeof(kBufferSize));
 
-    struct sockaddr_in server;
+    struct sockaddr_in server {};
     server.sin_addr.s_addr = inet_addr(ip.c_str());
     server.sin_family = AF_INET;
     server.sin_port = htons(static_cast<uint16_t>(port));
@@ -122,10 +122,9 @@ void TcpConnection::EstablishConnection() {
     FD_ZERO(&fdset);
     FD_SET(socket_fd, &fdset);
 
-    struct timeval time_val;
+    struct timeval time_val {};
     time_val.tv_sec =
         std::chrono::duration_cast<std::chrono::seconds>(kConnectTimeout).count();
-    time_val.tv_usec = 0;
 
     WaitForConnection(socket_fd, &fdset, time_val);
     SetNonBlocking(false);
@@ -151,7 +150,7 @@ void TcpConnection::SendData(std::string_view data) const {
 
         if (sent < 0) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                struct pollfd pfd;
+                struct pollfd pfd {};
                 pfd.fd = socket_fd;
                 pfd.events = POLLOUT;
                 int ret = poll(&pfd, 1, static_cast<int>(kReadTimeout.count()));
@@ -179,7 +178,7 @@ std::string TcpConnection::ReceiveExactBytes(size_t num_bytes) const {
             throw std::runtime_error("Connection terminated during receive");
         }
 
-        struct pollfd pfd;
+        struct pollfd pfd {};
         pfd.fd = socket_fd;
         pfd.events = POLLIN;
         int ret = poll(&pfd, 1, static_cast<int>(kReadTimeout.count()));
@@ -228,7 +227,7 @@ std::string TcpConnection::ReceiveData(size_t expected_size) const {
     std::string message;
 
     if (message_size == 0) {
-        struct pollfd pfd;
+        struct pollfd pfd {};
         pfd.fd = socket_fd;
         pfd.events = POLLIN;
         int ret = poll(&pfd, 1, static_cast<int>(kReadTimeout.count()));
